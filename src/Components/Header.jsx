@@ -29,7 +29,7 @@ function Header() {
             <Nav className="ms-auto">
               <Nav.Link className="btn btn-outline-light">
                 <Link
-                  to={"/wishlist"}
+                  to={"/cart"}
                   style={{
                     color: "black",
                     fontWeight: "bold",
