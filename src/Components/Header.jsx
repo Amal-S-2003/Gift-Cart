@@ -2,18 +2,20 @@ import React, { useEffect, useState } from "react";
 import { Badge, Container, Form, Nav, Navbar } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { searchProduct } from "../Redux/Slice/ProductSlice";
-
+import { searchProduct } from "../Redux/slice/productSlice";
 
 function Header({ insideHome }) {
-  const dispatch=useDispatch();
+  const dispatch = useDispatch();
   const [wishlistCount, setWishlistCount] = useState(0);
+  const [cartCount, setCartCount] = useState(0);
+  const { cart } = useSelector((state) => state.cartReducer);
+
   const { wishlist } = useSelector((state) => state.wishlistReducer);
 
   useEffect(() => {
-    setWishlistCount(wishlist.length)
-    
-  }, [wishlist]);
+    setWishlistCount(wishlist.length);
+    setCartCount(cart.length);
+  }, [wishlist, cart]);
   return (
     <>
       <Navbar expand="lg" style={{ background: "#afcbd5" }}>
@@ -36,7 +38,9 @@ function Header({ insideHome }) {
               type="text"
               placeholder="Search"
               className="ms-5 w-25"
-              onChange={e=>dispatch(searchProduct(e.target.value.toLowerCase()))}
+              onChange={(e) =>
+                dispatch(searchProduct(e.target.value.toLowerCase()))
+              }
             />
           )}
           <Navbar.Collapse id="basic-navbar-nav">
@@ -52,7 +56,7 @@ function Header({ insideHome }) {
                 >
                   <i class="fa-solid fa-cart-shopping text-danger"></i>
                   <b className="mx-1">Cart</b>
-                  <Badge bg="success rounded ms-s">0</Badge>
+                  <Badge bg="success rounded ms-s">{cartCount}</Badge>
                 </Link>
               </Nav.Link>
               <Nav.Link className="btn btn-outline-light">

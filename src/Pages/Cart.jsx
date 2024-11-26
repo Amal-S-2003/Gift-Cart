@@ -1,61 +1,107 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../Components/Header";
+import { useDispatch, useSelector } from "react-redux";
+import { emptyCart, removeFromCart } from "../Redux/slice/cartSlice";
+import { Link } from "react-router-dom";
 
 function Cart() {
+  const { cart } = useSelector((state) => state.cartReducer);
+  const dispatch = useDispatch();
+  const [total, setTotal] = useState(0);
+  useEffect(() => {
+    if (cart?.length > 0) {
+      setTotal(
+        cart?.map((product) => product?.totalPrice).reduce((p1, p2) => p1 + p2)
+      );
+    } else {
+      setTotal(0);
+    }
+  }, []);
   return (
     <>
-    <Header/>    
-    <div>
-      <div className="row container">
-        <div className="col-lg-1"></div>
-        <div className="col-lg-7">
-          <div className="table shadow mt-5">
-            <table className="w-100">
-              <tr>
-                <th>#</th>
-                <th>Title</th>
-                <th>Image</th>
-                <th>Price</th>
-                <th>Action</th>
-              </tr>
-              <tr>
-                <td>1</td>
-                <td>Product</td>
-                <td>
-                  <img
-                    src="https://plus.unsplash.com/premium_photo-1664872566732-d5a16add5989?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                    width={"70%"}
-                    height={"200px"}
-                    alt=""
-                  />
-                </td>
-                <td>$895</td>
-                <td>
-                  <button className="btn">
-                    <i class="fa-solid fa-trash text-danger"></i>
-                  </button>
-                </td>
-              </tr>
-            </table>
+      <Header />
+      <div>
+        {cart.length > 0 ? (
+          <div className="row container">
+            <div className="col-lg-1"></div>
+            <div className="col-lg-7">
+              <div className="table shadow mt-5">
+                <table className="w-100">
+                  <tr>
+                    <th>#</th>
+                    <th>Title</th>
+                    <th>Image</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Action</th>
+                  </tr>
+                  {cart?.map((product, index) => (
+                    <tr>
+                      <td>{index + 1}</td>
+                      <td>{product.title}</td>
+                      <td>
+                        <img
+                          src={product.thumbnail}
+                          width={"70%"}
+                          height={"auto"}
+                          alt=""
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="text"
+                          readOnly
+                          value={product.quantity}
+                          style={{ width: "25px" }}
+                        />
+                      </td>
+                      <td>${product.totalPrice}</td>
+                      <td>
+                        <button
+                          className="btn"
+                          onClick={() => dispatch(removeFromCart(product?.id))}
+                        >
+                          <i class="fa-solid fa-trash text-danger"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </table>
+                <div className="d-flex justify-content-between p-3">
+                  <button className="btn btn-danger" onClick={()=>dispatch(emptyCart())}>Empty Cart</button>
+                  <Link to={'/'} className="btn btn-info">Shop More</Link>
+                </div>
+              </div>
+            </div>
+            <div className="col-lg-1"></div>
+            <div className="col-lg-3">
+              <div className="card shadow rounded mt-5 p-3 w-100">
+                <h2 className="text-dark fw-bolder">Cart Summary</h2>
+                <h3>
+                  <span className="text-dark fw-bolder">Total Products</span>
+                  {cart?.length}
+                </h3>
+                <h3>
+                  Total Price:{" "}
+                  <span className="text-danger fw-bolder">${total}</span>
+                </h3>
+              </div>
+              <div className="d-grid">
+                <button className="btn btn-success mt-2">Checkout</button>
+              </div>
+            </div>
           </div>
-        </div>
-        <div className="col-lg-1"></div>
-        <div className="col-lg-3">
-          <div className="card shadow rounded mt-5 p-5 w-100">
-            <h2 className="text-dark fw-bolder">Cart Summary</h2>
-            <h3>
-              <span className="text-dark fw-bolder">Total Products</span>3
-            </h3>
-            <h3>
-              Total Price: <span className="text-danger fw-bolder">$1000</span>
-            </h3>
+        ) : (
+          <div className="text-center mt-5">
+            <img
+              src="https://img.freepik.com/free-vector/couple-riding-supermarket-shopping-cart_33099-179.jpg?t=st=1732168640~exp=1732172240~hmac=4fc35cfa039933c15f3ef69bf70bc71b16ddcf65f2c61008f3d9aee1e1b50758&w=740"
+              alt=""
+              style={{ width: "400px" }}
+            />
+            <h2>Your Cart is Empty</h2>
           </div>
-          <div className="d-grid">
-            <button className="btn btn-success mt-2">Checkout</button>
-          </div>
-        </div>
+        )}
       </div>
-    </div>
     </>
   );
 }

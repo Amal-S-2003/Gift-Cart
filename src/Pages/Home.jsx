@@ -3,13 +3,15 @@ import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
 import { Button, Card, Col, Row, Spinner } from "react-bootstrap";
-import { fetchProducts } from "../Redux/Slice/ProductSlice";
+import { fetchProducts } from "../Redux/slice/productSlice";
 import Header from "../Components/Header";
 import { addToWishlist } from "../Redux/slice/wishlistSlice";
+import { addToCart } from "../Redux/slice/cartSlice";
 
 function Home() {
   const dispatch = useDispatch();
   const { wishlist } = useSelector((state) => state.wishlistReducer);
+  const { cart } = useSelector((state) => state.cartReducer);
   const { allproducts, loading, error } = useSelector(
     (state) => state.productReducer
   );
@@ -17,11 +19,25 @@ function Home() {
     dispatch(fetchProducts());
   }, []);
   const handleWishlist = (product) => {
+    console.log(wishlist);
     const existingProduct = wishlist.find((item) => item.id == product.id);
     if (existingProduct) {
       alert("product already exist");
     } else {
       dispatch(addToWishlist(product));
+    }
+  };
+
+  const handleCart = (product) => {
+    console.log(cart);
+
+    const existingProduct = cart?.find((item) => item.id == product.id);
+    if (existingProduct) {
+      alert("Items Added");
+      dispatch(addToCart(product));
+    } else {
+      alert("Item Added");
+      dispatch(addToCart(product));
     }
   };
   return (
@@ -52,11 +68,14 @@ function Home() {
                       <div className="d-flex justify-content-between">
                         <Button
                           className="btn btn-light"
-                          onClick={()=>handleWishlist(product)}
+                          onClick={() => handleWishlist(product)}
                         >
                           <i class="fa-solid fa-heart"></i>
                         </Button>
-                        <Button className="btn btn-light">
+                        <Button
+                          className="btn btn-light"
+                          onClick={() => handleCart(product)}
+                        >
                           <i class="fa-solid fa-cart-shopping"></i>
                         </Button>
                       </div>

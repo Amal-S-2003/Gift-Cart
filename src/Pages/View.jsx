@@ -4,11 +4,14 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addToWishlist } from "../Redux/slice/wishlistSlice";
+import { addToCart } from "../Redux/slice/cartSlice";
 
 function View() {
   const { id } = useParams();
   const [product, setProduct] = useState();
   const { wishlist } = useSelector((state) => state.wishlistReducer);
+  const { cart } = useSelector((state) => state.cartReducer);
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -28,6 +31,19 @@ function View() {
       dispatch(addToWishlist(product))
     }
   }
+  
+  const handleCart = (product) => {
+    console.log(cart);
+    
+    const existingProduct = cart?.find(item => item.id == product.id);
+    if (existingProduct) {
+      alert("Items Added");
+      dispatch(addToCart(product));
+    } else {
+      alert("Item Added");
+      dispatch(addToCart(product));
+    }
+  };
   return (
     <>
       <Header />
@@ -47,7 +63,7 @@ function View() {
             <Button className="btn btn-outline-dark" onClick={()=>handleWishlist(product)}>
               <i class="fa-solid fa-heart text-danger"></i>wishlist
             </Button>
-            <Button className="btn btn-outline-dark">
+            <Button className="btn btn-outline-dark" onClick={() => handleCart(product)}>
               <i class="fa-solid fa-cart-plus text-light"></i>Cart
             </Button>
           </div>
